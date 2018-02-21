@@ -20,7 +20,7 @@ function createApp() {
   if (config.NODE_ENV !== 'production') {
     app.use(morgan('dev'));
   }
-
+console.log(config.ALLOW_HTTP)
   if (!config.ALLOW_HTTP) {
     logger.info('All requests require HTTPS.');
     app.use(requireHttps());

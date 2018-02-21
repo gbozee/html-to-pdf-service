@@ -1,0 +1,14 @@
+version: "2"
+# networks:
+#   app: null
+volumes:
+  static_files: {}
+services:
+  node:
+    build: 
+      context: .
+    # command: npm run server
+    environment:
+      - ALLOW_HTTP=true
+    ports:
+    - "9000:9000"
