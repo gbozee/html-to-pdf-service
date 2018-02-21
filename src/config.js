@@ -9,6 +9,7 @@ const config = {
   DEBUG_MODE: process.env.DEBUG_MODE === 'true',
   API_TOKENS: [],
   IS_LINUX: process.env.IS_LINUX === 'true',
+  CORS_ORIGIN: "*",
 };
 
 if (process.env.API_TOKENS) {
