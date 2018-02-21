@@ -2,5 +2,6 @@
   "env": {
     "ALLOW_HTTP": "true",
     "IS_LINUX": "true"
-  }
+  },
+  "alias": "career-lyft-pdf"
 }
