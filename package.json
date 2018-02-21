@@ -42,6 +42,7 @@
     "eslint-plugin-import": "^2.7.0",
     "mocha": "^4.0.1",
     "nodemon": "^1.12.1",
+    "now": "^9.3.3",
     "supertest": "^3.0.0"
   }
 }

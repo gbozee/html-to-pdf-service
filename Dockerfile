@@ -22,4 +22,5 @@ RUN yarn
 COPY src/ ./src
 
 EXPOSE 9000
-CMD "nodemon --watch ./src -e js src/index.js"
+# CMD "/usr/src/app/node_modules/.bin/nodemon --watch /usr/src/app/src -e js /usr/src/app/src/index.js"
+CMD ["npm", "start"]
