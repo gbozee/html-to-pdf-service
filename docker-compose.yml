@@ -7,8 +7,9 @@ services:
   node:
     build: 
       context: .
-    # command: npm run server
+    command: npm run start
     environment:
       - ALLOW_HTTP=true
+      - IS_LINUX=true
     ports:
     - "9000:9000"

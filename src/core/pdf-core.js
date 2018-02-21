@@ -32,12 +32,16 @@ async function render(_opts = {}) {
 
   logOpts(opts);
 
-  const browser = await puppeteer.launch({
+  let configurations = {
     headless: !config.DEBUG_MODE,
     ignoreHTTPSErrors: opts.ignoreHttpsErrors,
     args: ['--disable-gpu', '--no-sandbox', '--disable-setuid-sandbox'],
     sloMo: config.DEBUG_MODE ? 250 : undefined,
-  });
+  }
+  if (config.IS_LINUX){
+    configurations.executablePath= '/usr/bin/chromium-browser'
+  }
+  const browser = await puppeteer.launch(configurations);
   const page = await browser.newPage();
 
   page.on('console', (...args) => logger.info('PAGE LOG:', ...args));

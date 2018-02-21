@@ -8,6 +8,7 @@ const config = {
   ALLOW_HTTP: process.env.ALLOW_HTTP === 'true',
   DEBUG_MODE: process.env.DEBUG_MODE === 'true',
   API_TOKENS: [],
+  IS_LINUX: process.env.IS_LINUX === 'true',
 };
 
 if (process.env.API_TOKENS) {

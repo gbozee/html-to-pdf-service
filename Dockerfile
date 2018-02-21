@@ -1,5 +1,10 @@
-FROM mhart/alpine-node:8
+FROM node:8-alpine
 
+RUN apk update && \
+    apk upgrade && \
+    apk add --update ca-certificates && \
+    apk add chromium --update-cache --repository http://nl.alpinelinux.org/alpine/edge/community \
+    rm -rf /var/cache/apk/*
 # Create app directory
 WORKDIR /usr/src/app
 
@@ -17,4 +22,4 @@ RUN yarn
 COPY src/ ./src
 
 EXPOSE 9000
-CMD "yarn start"
+CMD "nodemon --watch ./src -e js src/index.js"
