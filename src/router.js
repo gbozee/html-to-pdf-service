@@ -86,7 +86,5 @@ function getCvObject(template) {
     return foundTemplate;
   });
 }
-  return router;
-}
 
 module.exports = createRouter;
