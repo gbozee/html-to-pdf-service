@@ -9,7 +9,11 @@ const {
   renderQuerySchema,
   renderBodySchema,
   sharedQuerySchema
-} = require('./util/validation');
+} = require("./util/validation");
+
+const appcode = require("./to-html");
+const { buildPage, parseTemplates, endpoints } = appcode;
+const axios = require("axios");
 
 function createRouter() {
   const router = express.Router();
@@ -55,8 +59,32 @@ function createRouter() {
   };
   router.post('/api/render', validate(postRenderSchema), pdf.postRender);
   router.post('/api/renderScreenshot', screenshot.postRender)
-
+  router.post("/api/generate-html", (req, res, next) => {
+    let { template, defaults, userData } = req.body;
+    console.log(template);
+    getCvObject(template)
+      .then(result => {
+        let settings = { showPhoto: true };
+        let merged = { ...result.data.defaults, ...result.data };
+        var cvObject = merged;
+        if (template === settings.name) {
+          cvObject = { ...merged, ...settings };
+        }
+        cvObject = { ...merged, showPhoto: settings.showPhoto };
+        let html = buildPage({ cvObject, defaults, userData });
+        res.json({ html });
+      })
+      .catch(next);
+  });
   return router;
+}
+
+function getCvObject(template) {
+  return axios.get(endpoints.payment + "/templates").then(data => {
+    let templates = parseTemplates(data);
+    let foundTemplate = templates.find(x => x.name === template);
+    return foundTemplate;
+  });
 }
 
 module.exports = createRouter;
