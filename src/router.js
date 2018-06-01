@@ -1,21 +1,29 @@
-const _ = require('lodash');
-const validate = require('express-validation');
-const express = require('express');
-const pdf = require('./http/pdf-http');
-const config = require('./config');
-const logger = require('./util/logger')(__filename);
-const { renderQuerySchema, renderBodySchema, sharedQuerySchema } = require('./util/validation');
+const _ = require("lodash");
+const validate = require("express-validation");
+const express = require("express");
+const pdf = require("./http/pdf-http");
+const config = require("./config");
+const logger = require("./util/logger")(__filename);
+const {
+  renderQuerySchema,
+  renderBodySchema,
+  sharedQuerySchema
+} = require("./util/validation");
+
+const appcode = require("./to-html");
+const { buildPage, parseTemplates, endpoints } = appcode;
+const axios = require("axios");
 
 function createRouter() {
   const router = express.Router();
 
   if (!_.isEmpty(config.API_TOKENS)) {
-    logger.info('x-api-key authentication required');
+    logger.info("x-api-key authentication required");
 
-    router.use('/*', (req, res, next) => {
-      const userToken = req.headers['x-api-key'];
+    router.use("/*", (req, res, next) => {
+      const userToken = req.headers["x-api-key"];
       if (!_.includes(config.API_TOKENS, userToken)) {
-        const err = new Error('Invalid API token in x-api-key header.');
+        const err = new Error("Invalid API token in x-api-key header.");
         err.status = 401;
         return next(err);
       }
@@ -23,17 +31,17 @@ function createRouter() {
       return next();
     });
   } else {
-    logger.warn('Warning: no authentication required to use the API');
+    logger.warn("Warning: no authentication required to use the API");
   }
 
   const getRenderSchema = {
     query: renderQuerySchema,
     options: {
       allowUnknownBody: false,
-      allowUnknownQuery: false,
-    },
+      allowUnknownQuery: false
+    }
   };
-  router.get('/api/render', validate(getRenderSchema), pdf.getRender);
+  router.get("/api/render", validate(getRenderSchema), pdf.getRender);
 
   const postRenderSchema = {
     body: renderBodySchema,
@@ -44,12 +52,35 @@ function createRouter() {
 
       // Without this option, text body causes an error
       // https://github.com/AndrewKeig/express-validation/issues/36
-      contextRequest: true,
-    },
+      contextRequest: true
+    }
   };
-  router.post('/api/render', validate(postRenderSchema), pdf.postRender);
-
+  router.post("/api/render", validate(postRenderSchema), pdf.postRender);
+  router.post("/api/generate-html", (req, res, next) => {
+    let { template, defaults, userData } = req.body;
+    console.log(template);
+    getCvObject(template)
+      .then(result => {
+        let settings = { showPhoto: true };
+        let merged = { ...result.data.defaults, ...result.data };
+        var cvObject = merged;
+        if (template === settings.name) {
+          cvObject = { ...merged, ...settings };
+        }
+        cvObject = { ...merged, showPhoto: settings.showPhoto };
+        let html = buildPage({ cvObject, defaults, userData });
+        res.json({ html });
+      })
+      .catch(next);
+  });
   return router;
 }
 
+function getCvObject(template) {
+  return axios.get(endpoints.payment + "/templates").then(data => {
+    let templates = parseTemplates(data);
+    let foundTemplate = templates.find(x => x.name === template);
+    return foundTemplate;
+  });
+}
 module.exports = createRouter;
