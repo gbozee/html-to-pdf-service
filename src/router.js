@@ -61,7 +61,6 @@ function createRouter() {
   router.post('/api/renderScreenshot', screenshot.postRender)
   router.post('/api/cvObject', (req,res,next)=>{
     let { template } = req.body;
-    console.log(template);
     sharedImplementation(template)
       .then(cvObject => {
         res.json({ cvObject });
@@ -70,7 +69,6 @@ function createRouter() {
   })
   router.post("/api/generate-html", (req, res, next) => {
     let { template, defaults, userData } = req.body;
-    console.log(template);
     sharedImplementation(template)
       .then(cvObject => {
         let html = buildPage({ cvObject, defaults, userData });
