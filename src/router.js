@@ -59,24 +59,38 @@ function createRouter() {
   };
   router.post('/api/render', validate(postRenderSchema), pdf.postRender);
   router.post('/api/renderScreenshot', screenshot.postRender)
+  router.post('/api/cvObject', (req,res,next)=>{
+    let { template } = req.body;
+    sharedImplementation(template)
+      .then(cvObject => {
+        res.json({ cvObject });
+      })
+      .catch(next);
+  })
   router.post("/api/generate-html", (req, res, next) => {
     let { template, defaults, userData } = req.body;
-    console.log(template);
-    getCvObject(template)
-      .then(result => {
-        let settings = { showPhoto: true };
-        let merged = { ...result.data.defaults, ...result.data };
-        var cvObject = merged;
-        if (template === settings.name) {
-          cvObject = { ...merged, ...settings };
-        }
-        cvObject = { ...merged, showPhoto: settings.showPhoto };
+    sharedImplementation(template)
+      .then(cvObject => {
         let html = buildPage({ cvObject, defaults, userData });
         res.json({ html });
       })
       .catch(next);
   });
   return router;
+}
+
+function sharedImplementation(template){
+  return getCvObject(template)
+    .then(result => {
+      let settings = { showPhoto: true };
+      let merged = { ...result.data.defaults, ...result.data };
+      var cvObject = merged;
+      if (template === settings.name) {
+        cvObject = { ...merged, ...settings };
+      }
+      cvObject = { ...merged, showPhoto: settings.showPhoto };
+      return cvObject
+    })
 }
 
 function getCvObject(template) {

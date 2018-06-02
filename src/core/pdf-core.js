@@ -7,7 +7,7 @@ async function render(_opts = {}) {
   const opts = _.merge({
     cookies: [],
     scrollPage: false,
-    emulateScreenMedia: true,
+    // emulateScreenMedia: true,
     ignoreHttpsErrors: false,
     html: null,
     viewport: {
