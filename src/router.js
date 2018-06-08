@@ -60,10 +60,10 @@ function createRouter() {
   router.post('/api/render', validate(postRenderSchema), pdf.postRender);
   router.post('/api/renderScreenshot', screenshot.postRender)
   router.post('/api/cvObject', (req,res,next)=>{
-    let { template } = req.body;
+    let { template,defaults,userData } = req.body;
     sharedImplementation(template)
       .then(cvObject => {
-        res.json({ cvObject });
+        res.json({ cvObject,defaults,userData });
       })
       .catch(next);
   })
