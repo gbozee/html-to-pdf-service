@@ -7,7 +7,7 @@ async function render(_opts = {}) {
     const opts = _.merge({
         cookies: [],
         scrollPage: false,
-        emulateScreenMedia: true,
+        // emulateScreenMedia: true,
         ignoreHttpsErrors: false,
         html: null,
         waitFor: 3000,
@@ -21,12 +21,8 @@ async function render(_opts = {}) {
         },
         pdf: {
             path: 'screenshot.png',
-            clip: {
-                x: 0,
-                y: 0,
-                width: 1600,
-                height: 1200
-            }
+            format: 'A4',
+            printBackground: true,
         },
     }, _opts);
 
